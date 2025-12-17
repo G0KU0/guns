@@ -1,5 +1,7 @@
-// API Configuration
-const API_URL = 'http://localhost:3000/api';
+// API Configuration - Automatically detects production/development
+const API_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000/api' 
+    : '/api';
 
 // Current User State
 let currentUser = null;
