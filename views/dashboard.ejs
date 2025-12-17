@@ -1,56 +1,156 @@
 <!DOCTYPE html>
-<html>
+<html lang="hu">
 <head>
-    <title>Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guns.lol Klón - Vezérlőpult</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 700px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .link-box { background: #e7f3ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #1877f2; text-align: center; }
-        a { color: #1877f2; text-decoration: none; font-weight: bold; }
+        :root {
+            --bg-color: #000;
+            --bg-darker: #0a0a0a;
+            --card-bg: #141414;
+            --input-bg: #1f1f1f;
+            --text-color: #fff;
+            --text-muted: #888;
+            --accent-color: #fff;
+            --border-color: #2a2a2a;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-color); min-height: 100vh; display: flex; }
+
+        /* Oldalsáv Menü */
+        .sidebar { width: 250px; background-color: var(--bg-darker); padding: 20px; border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        .sidebar-logo { font-size: 1.5rem; font-weight: 800; margin-bottom: 40px; display: flex; align-items: center; }
+        .sidebar-logo i { margin-right: 10px; color: var(--text-color); }
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li { margin-bottom: 10px; }
+        .sidebar-menu a { display: flex; align-items: center; padding: 12px 15px; text-decoration: none; color: var(--text-muted); border-radius: 8px; transition: all 0.2s; }
+        .sidebar-menu a i { margin-right: 15px; font-size: 1.2rem; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background-color: var(--card-bg); color: var(--text-color); }
+        .sidebar-footer { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); }
+        .sidebar-footer a { display: flex; align-items: center; text-decoration: none; color: var(--text-muted); padding: 10px; border-radius: 8px; transition: all 0.2s; }
+        .sidebar-footer a:hover { background-color: rgba(255, 0, 0, 0.1); color: #ff4d4d; }
+
+        /* Fő Tartalom */
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .header h2 { font-size: 1.8rem; font-weight: 600; }
+        .profile-link-box { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; display: flex; align-items: center; }
+        .profile-link-box i { margin-right: 15px; font-size: 1.5rem; color: var(--text-muted); }
+        .profile-link-box a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
+
+        /* Szekciók és Kártyák */
+        .section-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; }
+        .card { background-color: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 25px; margin-bottom: 30px; }
         
-        label { display: block; margin-top: 15px; font-weight: 600; font-size: 0.9rem;}
-        input[type="text"], input[type="color"] { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        
-        h3 { border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 30px; }
-        button { background: #000; color: white; width: 100%; padding: 15px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 20px; }
-        button:hover { background: #333; }
-        .logout { float: right; color: red; font-size: 14px; margin-bottom: 10px;}
+        /* Assets Uploader (Képes dobozok) */
+        .assets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .asset-card { background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; text-align: center; transition: all 0.2s; cursor: pointer; }
+        .asset-card:hover { border-color: var(--accent-color); }
+        .asset-card i { font-size: 2rem; color: var(--text-muted); margin-bottom: 10px; }
+        .asset-card h4 { margin-bottom: 15px; font-weight: 600; }
+        .asset-card input[type="text"] { width: 100%; background: var(--bg-color); border: 1px solid var(--border-color); padding: 8px; border-radius: 6px; color: var(--text-color); }
+
+        /* Űrlap elemek */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-muted); }
+        input[type="text"], input[type="color"], textarea { width: 100%; padding: 12px; background-color: var(--input-bg); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-color); font-size: 0.95rem; transition: border 0.2s; }
+        input:focus, textarea:focus { outline: none; border-color: var(--accent-color); }
+        input[type="color"] { height: 45px; padding: 5px; }
+        textarea { resize: vertical; min-height: 80px; }
+
+        /* Mentés Gomb */
+        .save-btn { background-color: var(--text-color); color: var(--bg-color); border: none; padding: 15px 30px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: opacity 0.2s; width: auto; margin-left: auto; display: block; }
+        .save-btn:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <a href="/logout" class="logout">Kijelentkezés</a>
-        <h1>Vezérlőpult</h1>
-        
-        <div class="link-box">
-            A profilod itt érhető el: <br>
-            <a href="/<%= user.username %>" target="_blank">localhost:3000/<%= user.username %></a>
-            <br><small>(👀 Megtekintések: <%= user.views %>)</small>
+
+    <nav class="sidebar">
+        <div class="sidebar-logo">
+            <i class="fa-solid fa-gun"></i> guns.lol klón
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active"><i class="fa-solid fa-sliders"></i> Kinézet</a></li>
+            <li><a href="#"><i class="fa-solid fa-link"></i> Linkek</a></li>
+            <li><a href="#"><i class="fa-solid fa-chart-simple"></i> Statisztika</a></li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Kijelentkezés</a>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="header">
+            <h2>Üdv, <%= user.username %>!</h2>
+        </div>
+
+        <div class="card profile-link-box">
+            <i class="fa-solid fa-share-nodes"></i>
+            <div>
+                A profilod elérhető itt: 
+                <a href="/<%= user.username %>" target="_blank">localhost:3000/<%= user.username %></a>
+            </div>
         </div>
 
         <form action="/dashboard" method="POST">
-            <h3>🎨 Kinézet</h3>
-            <label>Bio (Bemutatkozás):</label>
-            <input type="text" name="bio" value="<%= user.bio %>">
-            
-            <label>Profilkép (URL):</label>
-            <input type="text" name="avatarUrl" value="<%= user.avatarUrl %>" placeholder="https://kep.link/avatar.png">
+            <h3 class="section-title">Assets Feltöltő</h3>
+            <div class="card assets-grid">
+                <div class="asset-card">
+                    <h4>Profilkép</h4>
+                    <i class="fa-solid fa-image"></i>
+                    <input type="text" name="avatarUrl" value="<%= user.avatarUrl %>" placeholder="Kép URL beillesztése">
+                </div>
+                <div class="asset-card">
+                    <h4>Háttérkép</h4>
+                    <i class="fa-solid fa-panorama"></i>
+                    <input type="text" name="backgroundUrl" value="<%= user.backgroundUrl %>" placeholder="Kép URL beillesztése">
+                </div>
+            </div>
 
-            <label>Háttérkép (GIF/JPG URL):</label>
-            <input type="text" name="backgroundUrl" value="<%= user.backgroundUrl %>" placeholder="https://kep.link/hatter.gif">
+            <h3 class="section-title">Általános Kinézet</h3>
+            <div class="card form-grid">
+                <div class="form-group">
+                    <label>Bio (Bemutatkozás):</label>
+                    <textarea name="bio" placeholder="Írj magadról..."><%= user.bio %></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Szöveg Színe:</label>
+                    <input type="color" name="themeColor" value="<%= user.themeColor %>">
+                </div>
+            </div>
 
-            <label>Szöveg színe:</label>
-            <input type="color" name="themeColor" value="<%= user.themeColor %>" style="height: 40px;">
+            <h3 class="section-title">Social Linkek</h3>
+            <div class="card form-grid">
+                <div class="form-group">
+                    <label><i class="fa-brands fa-discord"></i> Discord:</label>
+                    <input type="text" name="discord" value="<%= user.discord %>" placeholder="https://discord.gg/...">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-brands fa-instagram"></i> Instagram:</label>
+                    <input type="text" name="instagram" value="<%= user.instagram %>" placeholder="https://instagram.com/...">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-brands fa-tiktok"></i> TikTok:</label>
+                    <input type="text" name="tiktok" value="<%= user.tiktok %>" placeholder="https://tiktok.com/@...">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-brands fa-youtube"></i> YouTube:</label>
+                    <input type="text" name="youtube" value="<%= user.youtube %>" placeholder="https://youtube.com/...">
+                </div>
+                <div class="form-group">
+                    <label><i class="fa-brands fa-telegram"></i> Telegram:</label>
+                    <input type="text" name="telegram" value="<%= user.telegram %>" placeholder="https://t.me/...">
+                </div>
+            </div>
 
-            <h3>🔗 Social Linkek</h3>
-            <label>Discord:</label> <input type="text" name="discord" value="<%= user.discord %>">
-            <label>Instagram:</label> <input type="text" name="instagram" value="<%= user.instagram %>">
-            <label>TikTok:</label> <input type="text" name="tiktok" value="<%= user.tiktok %>">
-            <label>YouTube:</label> <input type="text" name="youtube" value="<%= user.youtube %>">
-            <label>Telegram:</label> <input type="text" name="telegram" value="<%= user.telegram %>">
-
-            <button type="submit">💾 Mentés</button>
+            <button type="submit" class="save-btn">Változtatások Mentése</button>
         </form>
-    </div>
+    </main>
+
 </body>
 </html>
