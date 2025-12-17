@@ -1,7 +1,7 @@
 {
-  "name": "guns-clone",
-  "version": "2.0.0",
-  "description": "Guns.lol klón teljes verzió",
+  "name": "guns-clone-v3",
+  "version": "3.0.0",
+  "description": "Guns.lol Clone Ultimate",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
