@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; margin: 0; padding: 20px; color: #333; }
+        .container { max-width: 700px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .link-box { background: #e7f3ff; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #1877f2; text-align: center; }
+        a { color: #1877f2; text-decoration: none; font-weight: bold; }
+        
+        label { display: block; margin-top: 15px; font-weight: 600; font-size: 0.9rem;}
+        input[type="text"], input[type="color"] { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        
+        h3 { border-bottom: 2px solid #eee; padding-bottom: 5px; margin-top: 30px; }
+        button { background: #000; color: white; width: 100%; padding: 15px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; margin-top: 20px; }
+        button:hover { background: #333; }
+        .logout { float: right; color: red; font-size: 14px; margin-bottom: 10px;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/logout" class="logout">Kijelentkezés</a>
+        <h1>Vezérlőpult</h1>
+        
+        <div class="link-box">
+            A profilod itt érhető el: <br>
+            <a href="/<%= user.username %>" target="_blank">localhost:3000/<%= user.username %></a>
+            <br><small>(👀 Megtekintések: <%= user.views %>)</small>
+        </div>
+
+        <form action="/dashboard" method="POST">
+            <h3>🎨 Kinézet</h3>
+            <label>Bio (Bemutatkozás):</label>
+            <input type="text" name="bio" value="<%= user.bio %>">
+            
+            <label>Profilkép (URL):</label>
+            <input type="text" name="avatarUrl" value="<%= user.avatarUrl %>" placeholder="https://kep.link/avatar.png">
+
+            <label>Háttérkép (GIF/JPG URL):</label>
+            <input type="text" name="backgroundUrl" value="<%= user.backgroundUrl %>" placeholder="https://kep.link/hatter.gif">
+
+            <label>Szöveg színe:</label>
+            <input type="color" name="themeColor" value="<%= user.themeColor %>" style="height: 40px;">
+
+            <h3>🔗 Social Linkek</h3>
+            <label>Discord:</label> <input type="text" name="discord" value="<%= user.discord %>">
+            <label>Instagram:</label> <input type="text" name="instagram" value="<%= user.instagram %>">
+            <label>TikTok:</label> <input type="text" name="tiktok" value="<%= user.tiktok %>">
+            <label>YouTube:</label> <input type="text" name="youtube" value="<%= user.youtube %>">
+            <label>Telegram:</label> <input type="text" name="telegram" value="<%= user.telegram %>">
+
+            <button type="submit">💾 Mentés</button>
+        </form>
+    </div>
+</body>
+</html>
