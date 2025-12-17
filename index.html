@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkHub - Kapcsold össze a világod</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-link"></i>
+                <span>LinkHub</span>
+            </div>
+            <div id="nav-buttons" class="nav-buttons">
+                <button onclick="showModal('login')" class="btn-ghost">Bejelentkezés</button>
+                <button onclick="showModal('register')" class="btn-primary">Regisztráció</button>
+            </div>
+            <div id="nav-user" class="nav-user hidden">
+                <span id="nav-username">@username</span>
+                <button onclick="logout()" class="btn-ghost">Kijelentkezés</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Landing Page -->
+    <div id="landing-page" class="landing-page">
+        <div class="hero">
+            <div class="hero-icon">
+                <i class="fas fa-rocket"></i>
+            </div>
+            <h1 class="hero-title">
+                Egy link.<br>
+                <span class="gradient-text">Végtelen lehetőség.</span>
+            </h1>
+            <p class="hero-subtitle">
+                Hozd létre a saját egyedi profilodat, oszd meg az összes social média fiókodat egyetlen helyen.
+            </p>
+            <div class="hero-buttons">
+                <button onclick="showModal('register')" class="btn-large btn-primary">
+                    <i class="fas fa-sparkles"></i>
+                    Kezdd el ingyen
+                </button>
+                <button onclick="showDemo()" class="btn-large btn-ghost">
+                    <i class="fas fa-eye"></i>
+                    Demo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard hidden">
+        <div class="container">
+            <!-- Profile Preview -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="avatar-container">
+                        <div class="avatar" id="avatar-letter">U</div>
+                    </div>
+                    <h2 class="profile-username" id="profile-username">@username</h2>
+                    <p class="profile-bio" id="profile-bio">Nincs még bio beállítva</p>
+                    <button onclick="copyProfileLink()" class="btn-primary">
+                        <i class="fas fa-copy"></i> Link másolása
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button onclick="switchTab('links')" class="tab-btn active" id="tab-links">
+                    <i class="fas fa-link"></i> Linkek
+                </button>
+                <button onclick="switchTab('settings')" class="tab-btn" id="tab-settings">
+                    <i class="fas fa-cog"></i> Beállítások
+                </button>
+            </div>
+
+            <!-- Links Tab -->
+            <div id="links-content" class="tab-content">
+                <!-- Add Link Form -->
+                <div class="card">
+                    <h3 class="card-title">
+                        <i class="fas fa-plus-circle"></i> Új link hozzáadása
+                    </h3>
+                    <div class="add-link-form">
+                        <input type="text" id="new-link-title" placeholder="Cím (pl. Instagram)" class="input-field">
+                        <input type="url" id="new-link-url" placeholder="URL (pl. https://instagram.com/...)" class="input-field">
+                        <button onclick="addLink()" class="btn-primary">
+                            <i class="fas fa-plus"></i> Hozzáadás
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Links List -->
+                <div id="links-list" class="links-list"></div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings-content" class="tab-content hidden">
+                <div class="card">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-edit"></i> Profil szerkesztése
+                    </h3>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label>Megjelenített név</label>
+                            <input type="text" id="settings-displayname" placeholder="Megjelenített név" class="input-field">
+                        </div>
+                        <div class="form-group">
+                            <label>Bio</label>
+                            <textarea id="settings-bio" placeholder="Írj magadról..." class="input-field textarea"></textarea>
+                        </div>
+                        <button onclick="saveSettings()" class="btn-primary">
+                            <i class="fas fa-save"></i> Mentés
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Profile View -->
+    <div id="demo-view" class="demo-view hidden">
+        <div class="profile-container">
+            <button onclick="hideDemo()" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Vissza
+            </button>
+            
+            <div class="profile-content">
+                <div class="avatar-container">
+                    <div class="avatar avatar-lg">D</div>
+                </div>
+                
+                <h2 class="profile-username">@demoprofile</h2>
+                <p class="profile-bio">🎮 Gamer | 📸 Fotós | 💻 Dev</p>
+                
+                <div class="profile-links">
+                    <a href="#" class="link-btn">
+                        <div class="link-icon instagram">
+                            <i class="fab fa-instagram"></i>
+                        </div>
+                        <span>Instagram</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="#" class="link-btn">
+                        <div class="link-icon twitter">
+                            <i class="fab fa-twitter"></i>
+                        </div>
+                        <span>Twitter / X</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="#" class="link-btn">
+                        <div class="link-icon discord">
+                            <i class="fab fa-discord"></i>
+                        </div>
+                        <span>Discord</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="#" class="link-btn">
+                        <div class="link-icon youtube">
+                            <i class="fab fa-youtube"></i>
+                        </div>
+                        <span>YouTube</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <div class="profile-footer">
+                    <i class="fas fa-link"></i> Készítve LinkHub-bal
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-overlay" onclick="hideModal()"></div>
+        <div class="modal-content">
+            <button onclick="hideModal()" class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <!-- Login Form -->
+            <div id="login-form">
+                <div class="modal-header">
+                    <div class="modal-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h2>Üdv újra!</h2>
+                    <p>Jelentkezz be a fiókodba</p>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="login-username" placeholder="Felhasználónév" class="input-field">
+                    <input type="password" id="login-password" placeholder="Jelszó" class="input-field">
+                    <button onclick="login()" class="btn-primary btn-full">Bejelentkezés</button>
+                </div>
+                <div class="modal-footer">
+                    Nincs még fiókod? 
+                    <button onclick="showModal('register')" class="link-btn-text">Regisztrálj!</button>
+                </div>
+            </div>
+            
+            <!-- Register Form -->
+            <div id="register-form" class="hidden">
+                <div class="modal-header">
+                    <div class="modal-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h2>Csatlakozz hozzánk!</h2>
+                    <p>Hozd létre a fiókodat</p>
+                </div>
+                <div class="modal-body">
+                    <input type="email" id="register-email" placeholder="Email cím" class="input-field">
+                    <input type="text" id="register-username" placeholder="Felhasználónév" class="input-field">
+                    <input type="password" id="register-password" placeholder="Jelszó" class="input-field">
+                    <input type="password" id="register-password-confirm" placeholder="Jelszó megerősítése" class="input-field">
+                    <button onclick="register()" class="btn-primary btn-full">Regisztráció</button>
+                </div>
+                <div class="modal-footer">
+                    Már van fiókod? 
+                    <button onclick="showModal('login')" class="link-btn-text">Jelentkezz be!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notification-container" class="notification-container"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
