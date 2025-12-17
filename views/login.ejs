@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Belépés</title>
+    <style>
+        body { background: #000; color: white; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        form { background: #111; padding: 40px; border-radius: 15px; width: 300px; text-align: center; border: 1px solid #333; }
+        input { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: white; border: none; cursor: pointer; font-weight: bold; border-radius: 5px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <form action="/login" method="POST">
+        <h2>Belépés</h2>
+        <input type="text" name="username" placeholder="Felhasználónév" required>
+        <input type="password" name="password" placeholder="Jelszó" required>
+        <button type="submit">Belépés</button>
+        <p><small>Nincs fiókod? <a href="/register" style="color: #888;">Regisztrálj</a></small></p>
+    </form>
+</body>
+</html>
