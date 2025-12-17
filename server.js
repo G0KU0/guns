@@ -1,0 +1,104 @@
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const session = require('express-session');
+const bcrypt = require('bcryptjs');
+const User = require('./models/User');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// --- ADATBÁZIS CSATLAKOZÁS ---
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('✅ MongoDB Csatlakoztatva'))
+  .catch(err => console.error('❌ MongoDB Hiba:', err));
+
+// --- BEÁLLÍTÁSOK ---
+app.set('view engine', 'ejs');
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static('public'));
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 nap
+}));
+
+// --- MIDDLEWARE (Ellenőrzi, be vagy-e lépve) ---
+const requireLogin = (req, res, next) => {
+    if (!req.session.userId) return res.redirect('/login');
+    next();
+};
+
+// --- ÚTVONALAK ---
+
+// 1. Kezdőlap
+app.get('/', (req, res) => {
+    res.render('index', { loggedIn: !!req.session.userId });
+});
+
+// 2. Regisztráció
+app.get('/register', (req, res) => res.render('register'));
+
+app.post('/register', async (req, res) => {
+    const { username, password } = req.body;
+    if(username.includes(' ')) return res.send("A név nem tartalmazhat szóközt!");
+    
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({ username, password: hashedPassword });
+        await newUser.save();
+        req.session.userId = newUser._id;
+        res.redirect('/dashboard');
+    } catch (e) {
+        res.send("Hiba: Ez a név már foglalt.");
+    }
+});
+
+// 3. Bejelentkezés
+app.get('/login', (req, res) => res.render('login'));
+
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+    if (user && await bcrypt.compare(password, user.password)) {
+        req.session.userId = user._id;
+        res.redirect('/dashboard');
+    } else {
+        res.send("Hibás adatok.");
+    }
+});
+
+// 4. Kijelentkezés
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+});
+
+// 5. DASHBOARD (Szerkesztő)
+app.get('/dashboard', requireLogin, async (req, res) => {
+    const user = await User.findById(req.session.userId);
+    res.render('dashboard', { user });
+});
+
+app.post('/dashboard', requireLogin, async (req, res) => {
+    await User.findByIdAndUpdate(req.session.userId, req.body);
+    res.redirect('/dashboard');
+});
+
+// 6. PROFIL OLDAL (Ez a publikus link)
+// Ez mindig a legutolsó legyen!
+app.get('/:username', async (req, res) => {
+    const user = await User.findOne({ username: req.params.username });
+    if (!user) return res.status(404).send("A felhasználó nem található.");
+    
+    // Megtekintés számláló növelése
+    user.views += 1;
+    await user.save();
+
+    res.render('profile', { user });
+});
+
+// --- INDÍTÁS ---
+app.listen(PORT, () => console.log(`🚀 Szerver fut: http://localhost:${PORT}`));
