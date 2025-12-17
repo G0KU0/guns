@@ -1,385 +1,114 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guns.lol Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
     <style>
         :root {
-            --bg-body: #09090b;      /* A legsötétebb háttér */
-            --bg-sidebar: #000000;   /* A menü sáv */
-            --bg-card: #121212;      /* A kártyák háttere */
-            --bg-input: #1a1a1a;     /* Input mezők */
-            --border: #27272a;       /* Keretek */
-            --primary: #8b5cf6;      /* A lila szín */
-            --primary-hover: #7c3aed;
-            --text-main: #ffffff;
-            --text-muted: #a1a1aa;
+            --bg-body: #09090b; --bg-sidebar: #000; --bg-card: #121212; --bg-input: #1a1a1a;
+            --border: #27272a; --primary: #8b5cf6; --text-main: #fff; --text-muted: #a1a1aa;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
         
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-        }
-
-        /* --- SIDEBAR (Bal oldali menü) --- */
-        .sidebar {
-            width: 260px;
-            background-color: var(--bg-sidebar);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 24px;
-            flex-shrink: 0;
-        }
-
-        .logo {
-            font-size: 1.25rem;
-            font-weight: 800;
-            margin-bottom: 32px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: var(--text-main);
-        }
-        .logo i { color: var(--primary); }
-
-        .menu-group { margin-bottom: 24px; }
-        .menu-label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            font-weight: 700;
-            margin-bottom: 12px;
-            padding-left: 12px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            color: var(--text-muted);
-            text-decoration: none;
-            border-radius: 8px;
-            transition: 0.2s;
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 4px;
-        }
-
-        .nav-item:hover { background-color: rgba(255,255,255,0.05); color: var(--text-main); }
-        .nav-item.active { 
-            background-color: rgba(139, 92, 246, 0.1); 
-            color: var(--primary); 
-        }
-
-        .user-footer {
-            margin-top: auto;
-            border-top: 1px solid var(--border);
-            padding-top: 16px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .user-avatar-mini {
-            width: 32px; height: 32px; border-radius: 50%; background: #333;
-        }
-
-        /* --- MAIN CONTENT (Jobb oldali tartalom) --- */
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 32px;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 32px;
-        }
-        .page-title { font-size: 1.5rem; font-weight: 700; }
+        /* Sidebar */
+        .sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border); padding: 24px; display: flex; flex-direction: column; }
+        .logo { font-size: 1.25rem; font-weight: 800; margin-bottom: 30px; display: flex; align-items: center; gap: 10px; } .logo i { color: var(--primary); }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px; color: var(--text-muted); text-decoration: none; border-radius: 8px; margin-bottom: 5px; font-weight: 500; transition: 0.2s; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-item.active { background: rgba(139, 92, 246, 0.1); color: var(--primary); }
         
-        .btn-view {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 8px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: 0.2s;
-        }
-        .btn-view:hover { border-color: var(--text-muted); }
-
-        /* --- ASSETS UPLOADER (A dobozos rész) --- */
-        .section-header { margin-bottom: 16px; font-weight: 600; color: var(--text-muted); }
+        /* Main Content */
+        .main-content { flex: 1; overflow-y: auto; padding: 32px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .btn-view { background: var(--bg-card); border: 1px solid var(--border); color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; }
         
-        .assets-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        .asset-box {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            position: relative;
-            transition: 0.2s;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-        
+        /* Assets Grid */
+        .section-header { font-weight: 600; color: var(--text-muted); margin: 30px 0 15px 0; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; }
+        .assets-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+        .asset-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 10px; transition: 0.2s; }
         .asset-box:hover { border-color: var(--primary); }
-
-        .asset-preview {
-            width: 100%; height: 100px;
-            background-color: var(--bg-input);
-            border-radius: 8px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-        }
-        .asset-preview img { width: 100%; height: 100%; object-fit: cover; }
-        .asset-preview i { font-size: 2rem; color: #333; }
-
-        .asset-label { font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; width: 100%; text-align: left;}
-        
-        .input-hidden-style {
-            width: 100%;
-            background: var(--bg-input);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 8px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-        }
-
-        /* --- PREMIUM BANNER --- */
-        .premium-banner {
-            background: linear-gradient(90deg, #4c1d95 0%, #7c3aed 100%);
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-            font-weight: 600;
-            margin-bottom: 32px;
-            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
-        }
-
-        /* --- GENERAL CUSTOMIZATION --- */
-        .custom-card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 32px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-            font-weight: 500;
-        }
-
-        .styled-input {
-            width: 100%;
-            background-color: var(--bg-input);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            transition: 0.2s;
-        }
+        .asset-label { font-size: 0.85rem; font-weight: 600; }
+        .styled-input { width: 100%; background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main); padding: 10px; border-radius: 8px; font-size: 0.9rem; }
         .styled-input:focus { outline: none; border-color: var(--primary); }
 
-        .color-input-wrapper {
-            display: flex; align-items: center; gap: 10px;
-            background: var(--bg-input); border: 1px solid var(--border);
-            padding: 8px; border-radius: 8px;
-        }
-        input[type="color"] {
-            background: none; border: none; width: 40px; height: 30px; cursor: pointer;
-        }
-
-        /* --- SAVE BUTTON (Fixed Bottom or Normal) --- */
-        .save-bar {
-            margin-top: 20px;
-            display: flex;
-            justify-content: flex-end;
-        }
-        .btn-save {
-            background-color: var(--text-main);
-            color: #000;
-            border: none;
-            padding: 12px 32px;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-save:hover { background-color: var(--primary); color: white; }
-
-        /* Mobil nézet javítás */
-        @media (max-width: 768px) {
-            body { flex-direction: column; overflow-y: auto; }
-            .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
-            .form-row { grid-template-columns: 1fr; }
-        }
+        /* General Form */
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px; }
+        .btn-save { background: white; color: black; border: none; padding: 12px 30px; border-radius: 8px; font-weight: 700; cursor: pointer; float: right; margin-top: 30px; transition: 0.2s; }
+        .btn-save:hover { background: var(--primary); color: white; }
     </style>
 </head>
 <body>
-
     <aside class="sidebar">
-        <div class="logo">
-            <i class="fa-solid fa-gun"></i> guns.lol
-        </div>
-
-        <div class="menu-group">
-            <div class="menu-label">Account</div>
-            <a href="#" class="nav-item"><i class="fa-solid fa-chart-line"></i> Overview</a>
-            <a href="#" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
-        </div>
-
-        <div class="menu-group">
-            <div class="menu-label">Page</div>
-            <a href="#" class="nav-item active"><i class="fa-solid fa-pen-ruler"></i> Customize</a>
-            <a href="#" class="nav-item"><i class="fa-solid fa-link"></i> Links</a>
-        </div>
-
-        <div class="menu-group">
-            <div class="menu-label">Other</div>
-            <a href="#" class="nav-item"><i class="fa-solid fa-gem"></i> Premium</a>
-            <a href="/logout" class="nav-item" style="color: #ef4444;"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
-        </div>
-
-        <div class="user-footer">
-            <div class="user-avatar-mini" style="background-image: url('<%= user.avatarUrl %>'); background-size: cover;"></div>
-            <div style="font-size: 0.9rem; font-weight: 600;"><%= user.username %></div>
-        </div>
+        <div class="logo"><i class="fa-solid fa-gun"></i> guns.lol</div>
+        <a href="#" class="nav-item active"><i class="fa-solid fa-pen-ruler"></i> Customize</a>
+        <a href="#" class="nav-item"><i class="fa-solid fa-link"></i> Links</a>
+        <a href="/logout" class="nav-item" style="color: #ef4444; margin-top: auto;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
     </aside>
 
     <main class="main-content">
         <div class="header">
-            <div class="page-title">Customize</div>
-            <a href="/<%= user.username %>" target="_blank" class="btn-view">
-                <i class="fa-solid fa-arrow-up-right-from-square"></i> My Page
-            </a>
+            <h2>Customize</h2>
+            <a href="/<%= user.username %>" target="_blank" class="btn-view"><i class="fa-solid fa-eye"></i> View Page</a>
         </div>
 
         <form action="/dashboard" method="POST">
-
-            <div class="section-header">Assets Uploader</div>
+            
+            <div class="section-header" style="margin-top: 0;">Assets Uploader</div>
             <div class="assets-grid">
-                
                 <div class="asset-box">
-                    <div class="asset-label">Background</div>
-                    <div class="asset-preview">
-                        <% if(user.backgroundUrl) { %>
-                            <img src="<%= user.backgroundUrl %>">
-                        <% } else { %>
-                            <i class="fa-regular fa-image"></i>
-                        <% } %>
-                    </div>
-                    <input type="text" name="backgroundUrl" class="input-hidden-style" value="<%= user.backgroundUrl %>" placeholder="Paste Image URL...">
+                    <div class="asset-label"><i class="fa-regular fa-image"></i> Background URL</div>
+                    <input type="text" name="backgroundUrl" class="styled-input" value="<%= user.backgroundUrl %>" placeholder="https://...">
                 </div>
-
                 <div class="asset-box">
-                    <div class="asset-label">Profile Avatar</div>
-                    <div class="asset-preview">
-                        <% if(user.avatarUrl) { %>
-                            <img src="<%= user.avatarUrl %>" style="border-radius: 50%; width: 80px; height: 80px;">
-                        <% } else { %>
-                            <i class="fa-regular fa-user"></i>
-                        <% } %>
-                    </div>
-                    <input type="text" name="avatarUrl" class="input-hidden-style" value="<%= user.avatarUrl %>" placeholder="Paste Image URL...">
+                    <div class="asset-label"><i class="fa-regular fa-user"></i> Avatar URL</div>
+                    <input type="text" name="avatarUrl" class="styled-input" value="<%= user.avatarUrl %>" placeholder="https://...">
                 </div>
-
-                <div class="asset-box" style="opacity: 0.5;">
-                    <div class="asset-label">Audio (Pro)</div>
-                    <div class="asset-preview"><i class="fa-solid fa-music"></i></div>
-                    <div style="font-size: 0.8rem;">Available in Premium</div>
+                <div class="asset-box">
+                    <div class="asset-label"><i class="fa-solid fa-music"></i> Music URL (MP3)</div>
+                    <input type="text" name="musicUrl" class="styled-input" value="<%= user.musicUrl %>" placeholder="https://...">
                 </div>
-            </div>
-
-            <div class="premium-banner">
-                <i class="fa-solid fa-gem"></i> Want exclusive features? Unlock more with Premium
+                <div class="asset-box">
+                    <div class="asset-label"><i class="fa-solid fa-mouse-pointer"></i> Cursor URL (PNG)</div>
+                    <input type="text" name="cursorUrl" class="styled-input" value="<%= user.cursorUrl %>" placeholder="https://...">
+                </div>
             </div>
 
             <div class="section-header">General Customization</div>
-            <div class="custom-card">
-                
+            <div class="asset-box" style="display: block;">
                 <div class="form-row">
-                    <div class="form-group">
-                        <label>Description (Bio)</label>
-                        <input type="text" name="bio" class="styled-input" value="<%= user.bio %>" placeholder="This is my description...">
+                    <div>
+                        <div class="asset-label" style="margin-bottom:8px;">Bio / Description</div>
+                        <input type="text" name="bio" class="styled-input" value="<%= user.bio %>">
                     </div>
-
-                    <div class="form-group">
-                        <label>Text Color</label>
-                        <div class="color-input-wrapper">
-                            <input type="color" name="themeColor" value="<%= user.themeColor %>">
-                            <span style="font-size: 0.9rem; color: #888;"><%= user.themeColor %></span>
-                        </div>
+                    <div>
+                        <div class="asset-label" style="margin-bottom:8px;">"Click to Enter" Text</div>
+                        <input type="text" name="clickToEnterText" class="styled-input" value="<%= user.clickToEnterText %>">
                     </div>
                 </div>
-
                 <div class="form-row">
-                    <div class="form-group">
-                        <label><i class="fa-brands fa-discord"></i> Discord URL</label>
-                        <input type="text" name="discord" class="styled-input" value="<%= user.discord %>">
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fa-brands fa-instagram"></i> Instagram URL</label>
-                        <input type="text" name="instagram" class="styled-input" value="<%= user.instagram %>">
+                    <div>
+                        <div class="asset-label" style="margin-bottom:8px;">Text Color</div>
+                        <input type="color" name="themeColor" value="<%= user.themeColor %>" style="width: 100%; height: 40px; background: none; border: none;">
                     </div>
                 </div>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label><i class="fa-brands fa-tiktok"></i> TikTok URL</label>
-                        <input type="text" name="tiktok" class="styled-input" value="<%= user.tiktok %>">
-                    </div>
-                    <div class="form-group">
-                        <label><i class="fa-brands fa-youtube"></i> YouTube URL</label>
-                        <input type="text" name="youtube" class="styled-input" value="<%= user.youtube %>">
-                    </div>
-                </div>
-
-                <div class="save-bar">
-                    <button type="submit" class="btn-save">Save Changes</button>
-                </div>
-
             </div>
+
+            <div class="section-header">Social Links</div>
+            <div class="assets-grid">
+                <input type="text" name="discord" class="styled-input" value="<%= user.discord %>" placeholder="Discord URL">
+                <input type="text" name="instagram" class="styled-input" value="<%= user.instagram %>" placeholder="Instagram URL">
+                <input type="text" name="tiktok" class="styled-input" value="<%= user.tiktok %>" placeholder="TikTok URL">
+                <input type="text" name="youtube" class="styled-input" value="<%= user.youtube %>" placeholder="YouTube URL">
+                <input type="text" name="telegram" class="styled-input" value="<%= user.telegram %>" placeholder="Telegram URL">
+            </div>
+
+            <button type="submit" class="btn-save">Save Changes</button>
+            <div style="height: 50px;"></div>
         </form>
     </main>
-
 </body>
 </html>
