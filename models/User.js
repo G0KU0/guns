@@ -1,17 +1,22 @@
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
-    // Belépési adatok
+    // Alapadatok
     username: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true },
     
-    // Profil kinézet
-    bio: { type: String, default: "Üdv a profilomon!" },
-    avatarUrl: { type: String, default: "https://i.imgur.com/6VBx3io.png" }, // Alap kép
-    backgroundUrl: { type: String, default: "https://i.imgur.com/M8PTk5o.jpg" }, // Alap háttér
-    themeColor: { type: String, default: "#ffffff" }, // Szöveg színe
+    // Kinézet (Assets)
+    bio: { type: String, default: "No bio yet." },
+    avatarUrl: { type: String, default: "https://i.imgur.com/6VBx3io.png" },
+    backgroundUrl: { type: String, default: "https://i.imgur.com/M8PTk5o.jpg" },
+    themeColor: { type: String, default: "#ffffff" },
     
-    // Social Média Linkek
+    // --- V3 ÚJ FUNKCIÓK ---
+    musicUrl: { type: String, default: "" },          // Zene link (MP3)
+    cursorUrl: { type: String, default: "" },         // Kurzor kép (PNG)
+    clickToEnterText: { type: String, default: "Click to enter..." }, // Belépő szöveg
+    
+    // Social Linkek
     discord: { type: String, default: "" },
     instagram: { type: String, default: "" },
     tiktok: { type: String, default: "" },
