@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Guns.lol Clone</title>
+    <style>
+        body { background: #050505; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        h1 { font-size: 3rem; margin-bottom: 20px; background: linear-gradient(45deg, #ff00cc, #3333ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .btn { padding: 15px 40px; background: white; color: black; text-decoration: none; font-weight: bold; border-radius: 50px; margin: 10px; transition: 0.3s; }
+        .btn:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(255,255,255,0.5); }
+    </style>
+</head>
+<body>
+    <h1>Készítsd el a Bio oldalad.</h1>
+    <div>
+        <% if (loggedIn) { %>
+            <a href="/dashboard" class="btn">Vezérlőpult</a>
+        <% } else { %>
+            <a href="/login" class="btn">Belépés</a>
+            <a href="/register" class="btn">Regisztráció</a>
+        <% } %>
+    </div>
+</body>
+</html>
