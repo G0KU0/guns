@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= user.username %> | Bio</title>
+    <title><%= user.username %></title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,135 +15,120 @@
             height: 100vh;
             width: 100vw;
             overflow: hidden;
+            background-color: #000;
+            color: <%= user.themeColor %>;
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #000;
-            color: <%= user.themeColor %>;
+            /* Egyedi Kurzor */
+            <% if(user.cursorUrl) { %>
+                cursor: url('<%= user.cursorUrl %>'), auto;
+            <% } %>
         }
 
-        /* Háttérkép + Blur */
+        /* --- OVERLAY (Click to enter) --- */
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: black; z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            cursor: pointer; transition: opacity 0.8s ease;
+        }
+        #overlay-text {
+            color: white; font-size: 1.5rem; font-weight: 600;
+            text-shadow: 0 0 15px rgba(255,255,255,0.8);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
+        /* --- TARTALOM --- */
+        #content { opacity: 0; transition: opacity 1s ease; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+
         .bg-image {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: url('<%= user.backgroundUrl %>');
-            background-size: cover;
-            background-position: center;
-            filter: blur(12px) brightness(0.5);
-            transform: scale(1.1);
-            z-index: -1;
+            background-size: cover; background-position: center;
+            filter: blur(10px) brightness(0.5); transform: scale(1.1); z-index: -1;
         }
 
-        /* Glassmorphism kártya */
         .card {
             background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 24px;
-            padding: 40px;
-            width: 90%;
-            max-width: 420px;
-            text-align: center;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px; padding: 40px;
+            width: 90%; max-width: 450px; text-align: center;
             box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            animation: slideUp 0.8s ease;
+            transform: translateY(20px); transition: transform 0.8s ease;
         }
 
         .avatar {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid rgba(255,255,255,0.1);
-            margin-bottom: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            transition: transform 0.3s;
-        }
-        .avatar:hover { transform: scale(1.05); }
-
-        h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin-bottom: 8px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            width: 120px; height: 120px; border-radius: 50%;
+            object-fit: cover; border: 2px solid rgba(255,255,255,0.15);
+            margin-bottom: 20px; box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
 
-        .bio {
-            font-size: 1rem;
-            opacity: 0.9;
-            margin-bottom: 30px;
-            line-height: 1.5;
-            font-weight: 400;
-        }
+        h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; text-shadow: 0 0 15px currentColor; }
+        .bio { font-size: 1rem; opacity: 0.9; margin-bottom: 30px; font-weight: 400; }
 
-        /* Ikonok */
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
+        .social-links { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
         .social-btn {
-            text-decoration: none;
-            color: white;
-            background: rgba(255,255,255,0.08);
-            width: 50px;
-            height: 50px;
-            border-radius: 14px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.4rem;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border: 1px solid rgba(255,255,255,0.05);
+            color: white; background: rgba(255,255,255,0.05);
+            width: 45px; height: 45px; border-radius: 12px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 1.4rem; text-decoration: none;
+            transition: all 0.3s; border: 1px solid rgba(255,255,255,0.05);
         }
-
-        .social-btn:hover {
-            background: rgba(255,255,255,0.25);
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        .views {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            font-size: 0.8rem;
-            opacity: 0.6;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .social-btn:hover { background: rgba(255,255,255,0.2); transform: translateY(-5px); box-shadow: 0 0 15px currentColor; }
+        
+        .views { position: absolute; bottom: 20px; right: 20px; font-size: 0.8rem; opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <div class="bg-image"></div>
+    <div id="overlay" onclick="enterSite()">
+        <div id="overlay-text"><%= user.clickToEnterText %></div>
+    </div>
 
-    <div class="card">
-        <img src="<%= user.avatarUrl %>" class="avatar" onerror="this.src='https://i.imgur.com/6VBx3io.png'">
-        
-        <h1><%= user.username %></h1>
-        <div class="bio"><%= user.bio %></div>
+    <% if(user.musicUrl) { %>
+        <audio id="bg-music" loop>
+            <source src="<%= user.musicUrl %>" type="audio/mpeg">
+        </audio>
+    <% } %>
 
-        <div class="social-links">
-            <% if(user.discord) { %><a href="<%= user.discord %>" target="_blank" class="social-btn"><i class="fab fa-discord"></i></a><% } %>
-            <% if(user.instagram) { %><a href="<%= user.instagram %>" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a><% } %>
-            <% if(user.tiktok) { %><a href="<%= user.tiktok %>" target="_blank" class="social-btn"><i class="fab fa-tiktok"></i></a><% } %>
-            <% if(user.youtube) { %><a href="<%= user.youtube %>" target="_blank" class="social-btn"><i class="fab fa-youtube"></i></a><% } %>
-            <% if(user.telegram) { %><a href="<%= user.telegram %>" target="_blank" class="social-btn"><i class="fab fa-telegram"></i></a><% } %>
+    <div id="content">
+        <div class="bg-image"></div>
+        <div class="card">
+            <img src="<%= user.avatarUrl %>" class="avatar" onerror="this.src='https://i.imgur.com/6VBx3io.png'">
+            <h1><%= user.username %></h1>
+            <div class="bio"><%= user.bio %></div>
+            <div class="social-links">
+                <% if(user.discord) { %><a href="<%= user.discord %>" target="_blank" class="social-btn"><i class="fab fa-discord"></i></a><% } %>
+                <% if(user.instagram) { %><a href="<%= user.instagram %>" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a><% } %>
+                <% if(user.tiktok) { %><a href="<%= user.tiktok %>" target="_blank" class="social-btn"><i class="fab fa-tiktok"></i></a><% } %>
+                <% if(user.youtube) { %><a href="<%= user.youtube %>" target="_blank" class="social-btn"><i class="fab fa-youtube"></i></a><% } %>
+                <% if(user.telegram) { %><a href="<%= user.telegram %>" target="_blank" class="social-btn"><i class="fab fa-telegram"></i></a><% } %>
+            </div>
         </div>
     </div>
+    <div class="views"><i class="fa-solid fa-eye"></i> <%= user.views %></div>
 
-    <div class="views">
-        <i class="far fa-eye"></i> <%= user.views %>
-    </div>
+    <script>
+        function enterSite() {
+            const overlay = document.getElementById('overlay');
+            const content = document.getElementById('content');
+            const music = document.getElementById('bg-music');
+            const card = document.querySelector('.card');
 
+            overlay.style.opacity = '0';
+            setTimeout(() => { overlay.style.display = 'none'; }, 800);
+
+            content.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+            
+            if(music) {
+                music.volume = 0.4;
+                music.play().catch(e => console.log("Audio autoplay blockolt: kattints újra"));
+            }
+        }
+    </script>
 </body>
 </html>
